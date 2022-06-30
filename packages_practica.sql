@@ -103,3 +103,48 @@ END;
 /
 
 SELECT * FROM REGIONS;
+
+-- paquetes de funciones
+
+CREATE OR REPLACE PACKAGE NOMINA as
+Function CALCULAR_NOMINA(SALARIO NUMBER) RETURN NUMBER;
+Function CALCULAR_NOMINA(SALARIO NUMBER, PORCENTAJE NUMBER) RETURN NUMBER;
+Function CALCULAR_NOMINA(SALARIO NUMBER, PORCENTAJE NUMBER, V VARCHAR2) RETURN NUMBER;
+END NOMINA;
+/
+CREATE OR REPLACE PACKAGE BODY NOMINA as
+Function CALCULAR_NOMINA(SALARIO NUMBER) RETURN NUMBER AS
+salario_neto number:=0;
+BEGIN --CALCULAR_NOMINA(SALARIO NUMBER) 
+    salario_neto:=salario * 0.85;
+    return salario_neto;
+
+END CALCULAR_NOMINA;
+
+Function CALCULAR_NOMINA(SALARIO NUMBER, PORCENTAJE NUMBER)  RETURN NUMBER AS
+salario_neto number:=0;
+BEGIN --CALCULAR_NOMINA(SALARIO NUMBER) 
+    return salario * ((100-porcentaje)/100);
+
+END CALCULAR_NOMINA;
+
+Function CALCULAR_NOMINA(SALARIO NUMBER, PORCENTAJE NUMBER, V VARCHAR2) RETURN NUMBER AS
+salario_neto number:=0;
+sal number :=0;
+BEGIN --CALCULAR_NOMINA(SALARIO NUMBER) 
+    if V = 'V' then
+        sal := SALARIO * 1.2;
+    end if;
+    salario_neto := salario * (porcentaje/100);
+    salario_neto := sal - salario_neto;
+    return salario_neto;
+
+END CALCULAR_NOMINA;
+
+END NOMINA;
+/
+-- pruebas de funciones dentro del paquete
+select FIRST_NAME, LAST_NAME, nomina.CALCULAR_NOMINA(salary, 50, 'V') from employees;
+select FIRST_NAME, LAST_NAME, nomina.CALCULAR_NOMINA(salary, 20) from employees;
+select FIRST_NAME, LAST_NAME, nomina.CALCULAR_NOMINA(salary) from employees;
+
